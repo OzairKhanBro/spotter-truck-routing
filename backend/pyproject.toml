@@ -1,0 +1,31 @@
+[project]
+name = "backend"
+version = "0.1.0"
+requires-python = ">=3.13"
+dependencies = [
+    "django>=5.2,<6",
+    "django-ninja>=1.4",
+    "gunicorn>=26.2.0",
+    "httpx>=0.28.1",
+    "polyline>=2.0.4",
+    "whitenoise>=6.12.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "pytest-django>=4.14.0",
+    "respx>=0.23.1",
+    "ruff>=0.17.0",
+]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings"
+python_files = ["test_*.py"]
+
+[tool.ruff]
+line-length = 100
+extend-exclude = ["trips/migrations"]
+
+[tool.ruff.lint]
+ignore = ["RUF012"]  # Django Meta/class attributes are lists by convention
