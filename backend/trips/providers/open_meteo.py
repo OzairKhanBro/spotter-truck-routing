@@ -90,7 +90,8 @@ def _compact(hourly: dict) -> dict:
         "time": hourly["time"],
         "wind": hourly["wind_speed_10m"],
         "gust": hourly["wind_gusts_10m"],
-        "rain": [None if r is None else r + (s or 0.0) for r, s in zip(rain, showers)],
+        # Rounded so 0.01 + 0.09 is 0.10 (Moderate), not 0.0999... (Low).
+        "rain": [None if r is None else round(r + (s or 0.0), 4) for r, s in zip(rain, showers)],
         "snow": hourly["snowfall"],
     }
 
