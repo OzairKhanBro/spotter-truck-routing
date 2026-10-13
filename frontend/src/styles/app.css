@@ -1,0 +1,82 @@
+@import "tailwindcss";
+@import "@fontsource/overpass/700.css";
+@import "@fontsource/overpass/800.css";
+@import "@fontsource/public-sans/400.css";
+@import "@fontsource/public-sans/500.css";
+@import "@fontsource/public-sans/600.css";
+@import "@fontsource/overpass-mono/400.css";
+@import "@fontsource/overpass-mono/600.css";
+
+@theme {
+  --color-paper: #eef1ee;
+  --color-ink: #1e2328;
+  --color-ink-soft: #4b535c;
+  --color-rule: #d5dbd6;
+  --color-guide: #0e6b45;
+  --color-guide-deep: #0a4f33;
+  --color-sign-white: #fafaf7;
+  --color-interstate: #1e4fa3;
+  --color-risk-low: #5e9c76;
+  --color-risk-moderate: #e9b824;
+  --color-risk-high: #ea7a1f;
+  --color-risk-severe: #c8232c;
+  --color-risk-no-travel: #4a1050;
+  --font-display: "Overpass", system-ui, sans-serif;
+  --font-sans: "Public Sans", system-ui, sans-serif;
+  --font-mono: "Overpass Mono", ui-monospace, monospace;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-interstate);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .panel {
+    @apply flex flex-col gap-5 overflow-y-auto p-5 md:p-6;
+  }
+  .field-label {
+    @apply mb-1 block text-xs font-semibold tracking-wide text-ink-soft uppercase;
+  }
+  .field-input {
+    @apply h-11 w-full rounded-md border border-rule bg-white px-3 text-[15px] text-ink;
+  }
+  .field-input:focus-visible {
+    outline-offset: 0;
+  }
+  .btn-primary {
+    @apply inline-flex h-11 items-center justify-center rounded-md bg-ink px-5 font-display text-[15px] font-bold tracking-wide text-sign-white;
+  }
+  .btn-primary:disabled {
+    @apply opacity-50;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-rule bg-white px-3 py-1 text-xs font-medium;
+  }
+  .num {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+}
