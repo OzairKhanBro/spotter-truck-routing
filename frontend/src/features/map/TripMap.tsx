@@ -52,15 +52,13 @@ export function TripMap({ trip, corridor, hour, selectedId = "", onSelect }: Pro
     [trip, startMs, hour],
   );
 
-  const tripId = trip?.id;
   useEffect(() => {
     if (!loaded || !trip) return;
     mapRef.current?.fitBounds(tripBounds(trip), {
       padding: 64,
       duration: reducedMotion() ? 0 : 900,
     });
-    // Refit only when a different trip arrives, not on every re-render of the same one.
-  }, [loaded, tripId]);
+  }, [loaded, trip]); // the cached trip object is stable, so this refits once per trip
 
   const onMove = useCallback((e: MapLayerMouseEvent) => {
     const f = e.features?.find((x) => x.layer.id === "checkpoint-dots");
