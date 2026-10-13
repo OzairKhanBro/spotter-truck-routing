@@ -11,23 +11,28 @@ Hosted: _added after deploy_
 Requirements: Python 3.13+ with [uv](https://docs.astral.sh/uv/), and [bun](https://bun.sh). No API keys are needed.
 
 ```bash
-# API on http://127.0.0.1:8000
-cd backend
-uv sync
-uv run python manage.py migrate
-uv run python manage.py runserver
-
-# Web app on http://localhost:5173 (proxies /api to the API)
-cd frontend
-bun install
-bun run dev
+make install   # backend + frontend dependencies, database migrations
+make dev       # API on http://127.0.0.1:8000 and web app on http://localhost:5173
 ```
 
-Tests and checks:
+The web app proxies `/api` to the API. Run `make` on its own to list every command. The main ones:
+
+| Command | What it does |
+|---|---|
+| `make api` / `make web` | Run only the API or only the web app |
+| `make test` | Backend (pytest) and frontend (vitest) tests |
+| `make lint` | Ruff, plus the frontend's format, lint and type checks |
+| `make fmt` | Auto-format and auto-fix both apps |
+| `make check` | Lint and test everything |
+| `make serve-prod` | Build the SPA and serve it with the API through gunicorn on :8000, as in production |
+| `make docker-up` / `make docker-down` / `make docker-logs` | Run the production image with Docker Compose on :8000 |
+| `make clean` | Remove build output, caches and the local database |
+
+Without make:
 
 ```bash
-cd backend && uv run pytest && uv run ruff check .
-cd frontend && bun run test && bun run check
+cd backend && uv sync && uv run python manage.py migrate && uv run python manage.py runserver
+cd frontend && bun install && bun run dev
 ```
 
 ## How a trip is planned
@@ -100,8 +105,11 @@ frontend/src/
 The app ships as one container: Django serves the API and the built SPA, with WhiteNoise serving the assets.
 
 ```bash
-docker build -t truck-routing .
-docker run --rm -p 8000:8000 -e DJANGO_ALLOWED_HOSTS=localhost truck-routing
+make docker-up      # docker compose up -d --build; app on http://localhost:8000
+make docker-logs
+make docker-down
 ```
+
+Compose keeps the SQLite database (saved trips and the forecast cache) in the `trip-data` volume, so it survives restarts. Set `DJANGO_SECRET_KEY` in your environment before running it anywhere but your own machine.
 
 On Render, push the repo to GitHub, then go to **New → Blueprint**, pick the repo, and Render creates the service from `render.yaml`. Set `HTTP_USER_AGENT` to `WeatherAwareTruckRouting/1.0 (+<your repo URL>)` so the public services can identify the app. On the free plan SQLite is wiped on every redeploy, so saved trips don't survive one.

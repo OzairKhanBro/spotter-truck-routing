@@ -13,5 +13,5 @@ RUN uv sync --frozen --no-dev
 COPY backend/ ./
 COPY --from=web /web/dist ./frontend_dist
 ENV PATH="/app/.venv/bin:$PATH" DJANGO_DEBUG=0 SQLITE_PATH=/app/data/db.sqlite3
-RUN mkdir -p /app/data && python manage.py collectstatic --noinput
+RUN mkdir -p /app/data /app/staticfiles && python manage.py collectstatic --noinput
 CMD ["sh", "-c", "python manage.py migrate --noinput && gunicorn config.wsgi --bind 0.0.0.0:${PORT:-8000} --workers 2 --threads 4 --timeout 120"]
